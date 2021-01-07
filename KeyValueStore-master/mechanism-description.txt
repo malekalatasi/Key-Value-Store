@@ -1,0 +1,22 @@
+Choosing which shards each replica goes to
+---------------------------------
+When initially choosing which shard each replica will go under, a shard will be
+created for the number of shards we want, then for each replica to add, they will
+be added to the shard with the least number of replicas, in order to balance the
+shards as much as possible.
+
+Resharding
+---------------------------------
+The node which the administrator triggered the reshard will take upon the role as
+a leader and do all the calculations to reshard, including re-allocating replicas
+to shards, and moving keys to the correct replica. Then, this "leader" will send
+the changes to all other nodes so it is propagated throughout the kvs.
+
+Key to shard mapping
+---------------------------------
+The specified key is converted to a string, then the ascii values of each character
+are summed together, and the modulus of that number by the number of shards yields
+the shard that particular key should be a part of.
+This is a very neutral hashing algorithm without the overhead of more feature-rich
+algorithms such as MD5 which are more computationally intensive and will take
+longer.
